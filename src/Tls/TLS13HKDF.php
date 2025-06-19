@@ -53,11 +53,7 @@ class TLS13HKDF
         $result = '';
         $t = '';
         $counter = 1;
-        $hashLen = match (self::DEFAULT_HASH) {
-            'sha256' => 32,
-            'sha384' => 48,
-            default => 32,
-        };
+        $hashLen = 32; // sha256 的输出长度
         
         while (strlen($result) < $length) {
             $t = hash_hmac(self::DEFAULT_HASH, $t . $info . chr($counter), $prk, true);
@@ -114,11 +110,7 @@ class TLS13HKDF
         }
         
         // 默认输出长度与哈希算法相同
-        $length = match (self::DEFAULT_HASH) {
-            'sha256' => 32,
-            'sha384' => 48,
-            default => 32,
-        };
+        $length = 32; // sha256 的输出长度
         
         return $this->expandLabel($secret, $label, $transcriptHash, $length);
     }

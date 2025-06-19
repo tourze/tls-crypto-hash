@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tourze\TLSCryptoHash\Hash;
 
 use Tourze\TLSCryptoHash\Contract\HashInterface;
-use Tourze\TLSCryptoHash\Exception\HashException;
 
 /**
  * MD5哈希函数实现
@@ -67,16 +66,11 @@ class MD5 implements HashInterface
     /**
      * 创建哈希上下文
      *
-     * @return resource|object 哈希上下文
-     * @throws HashException 如果创建上下文失败
+     * @return \HashContext 哈希上下文
      */
     public function createContext()
     {
-        $context = hash_init('md5');
-        if ($context === false) {
-            throw new HashException('无法初始化MD5哈希上下文');
-        }
-        return $context;
+        return hash_init('md5');
     }
 
     /**

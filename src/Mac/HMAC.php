@@ -6,7 +6,6 @@ namespace Tourze\TLSCryptoHash\Mac;
 
 use Tourze\TLSCryptoHash\Contract\HashInterface;
 use Tourze\TLSCryptoHash\Contract\MacInterface;
-use Tourze\TLSCryptoHash\Exception\MacException;
 
 /**
  * HMAC消息认证码实现
@@ -48,15 +47,10 @@ class HMAC implements MacInterface
      * @param string $data 要计算MAC的数据
      * @param string $key 密钥
      * @return string MAC值
-     * @throws MacException 如果计算MAC失败
      */
     public function compute(string $data, string $key): string
     {
-        $result = hash_hmac($this->hash->getName(), $data, $key, true);
-        if ($result === false) {
-            throw new MacException('HMAC计算失败');
-        }
-        return $result;
+        return hash_hmac($this->hash->getName(), $data, $key, true);
     }
 
     /**
