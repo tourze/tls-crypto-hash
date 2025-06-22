@@ -13,7 +13,7 @@ class TLS12PRF
 {
     /**
      * 计算PRF结果
-     * 
+     *
      * @param string $secret 密钥材料
      * @param string $label 标签
      * @param string $seed 种子
@@ -31,11 +31,11 @@ class TLS12PRF
      * P_hash(secret, seed) = HMAC_hash(secret, A(1) + seed) +
      *                         HMAC_hash(secret, A(2) + seed) +
      *                         HMAC_hash(secret, A(3) + seed) + ...
-     * 
+     *
      * 其中：
      * A(0) = seed
      * A(i) = HMAC_hash(secret, A(i-1))
-     * 
+     *
      * @param string $secret 密钥材料
      * @param string $seed 种子
      * @param int $length 所需输出的字节数
@@ -65,7 +65,7 @@ class TLS12PRF
     
     /**
      * 生成TLS 1.2主密钥
-     * 
+     *
      * @param string $premaster 预主密钥
      * @param string $clientRandom 客户端随机数
      * @param string $serverRandom 服务器随机数
@@ -79,7 +79,7 @@ class TLS12PRF
     
     /**
      * 生成TLS 1.2密钥块
-     * 
+     *
      * @param string $masterSecret 主密钥
      * @param string $clientRandom 客户端随机数
      * @param string $serverRandom 服务器随机数
@@ -94,7 +94,7 @@ class TLS12PRF
     
     /**
      * 生成TLS 1.2验证数据
-     * 
+     *
      * @param string $masterSecret 主密钥
      * @param string $handshakeHash 握手消息哈希
      * @param string $label 客户端("client finished")或服务器("server finished")标签

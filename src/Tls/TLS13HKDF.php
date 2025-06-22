@@ -13,7 +13,7 @@ class TLS13HKDF
 {
     /**
      * 默认哈希算法
-     * 
+     *
      * @var string
      */
     private const DEFAULT_HASH = 'sha256';
@@ -29,7 +29,7 @@ class TLS13HKDF
     
     /**
      * HKDF-Extract函数
-     * 
+     *
      * @param string $salt 盐值
      * @param string $ikm 输入密钥材料
      * @return string 伪随机密钥(PRK)
@@ -42,7 +42,7 @@ class TLS13HKDF
     
     /**
      * HKDF-Expand函数
-     * 
+     *
      * @param string $prk 伪随机密钥
      * @param string $info 上下文信息
      * @param int $length 输出长度
@@ -66,7 +66,7 @@ class TLS13HKDF
     
     /**
      * HKDF-Expand-Label函数
-     * 
+     *
      * @param string $secret 密钥
      * @param string $label 标签
      * @param string $context 上下文(通常是握手哈希)
@@ -92,7 +92,7 @@ class TLS13HKDF
     
     /**
      * Derive-Secret函数
-     * 
+     *
      * @param string $secret 密钥
      * @param string $label 标签
      * @param string $messages 消息内容(通常是之前所有握手消息的拼接)
@@ -117,7 +117,7 @@ class TLS13HKDF
     
     /**
      * 派生早期密钥
-     * 
+     *
      * @param string $psk 预共享密钥
      * @return string 早期密钥
      */
@@ -134,7 +134,7 @@ class TLS13HKDF
     
     /**
      * 从给定的早期密钥派生握手密钥
-     * 
+     *
      * @param string $earlySecret 早期密钥
      * @param string $sharedSecret 共享密钥(通常是密钥交换的结果)
      * @return string 握手密钥
@@ -150,7 +150,7 @@ class TLS13HKDF
     
     /**
      * 从给定的握手密钥派生主密钥
-     * 
+     *
      * @param string $handshakeSecret 握手密钥
      * @return string 主密钥
      */
