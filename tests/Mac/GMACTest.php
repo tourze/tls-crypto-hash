@@ -28,7 +28,7 @@ class GMACTest extends TestCase
         $this->assertEquals(16, $gmac->getOutputLength());
     }
 
-    public function provideKeySizes(): array
+    public static function provideKeySizes(): array
     {
         return [
             [128],
