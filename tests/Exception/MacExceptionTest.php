@@ -2,16 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Tourze\TLSCryptoHash\Tests\Unit\Exception;
+namespace Tourze\TLSCryptoHash\Tests\Exception;
 
-use PHPUnit\Framework\TestCase;
-use Tourze\TLSCryptoHash\Exception\MacException;
+use PHPUnit\Framework\Attributes\CoversClass;
+use Tourze\PHPUnitBase\AbstractExceptionTestCase;
 use Tourze\TLSCryptoHash\Exception\CryptoException;
+use Tourze\TLSCryptoHash\Exception\HashException;
+use Tourze\TLSCryptoHash\Exception\MacException;
 
 /**
  * MAC异常测试
+ *
+ * @internal
  */
-class MacExceptionTest extends TestCase
+#[CoversClass(MacException::class)]
+final class MacExceptionTest extends AbstractExceptionTestCase
 {
     /**
      * 测试异常实例化
@@ -19,32 +24,32 @@ class MacExceptionTest extends TestCase
     public function testExceptionCanBeInstantiated(): void
     {
         $exception = new MacException('MAC error');
-        
+
         $this->assertInstanceOf(MacException::class, $exception);
         $this->assertInstanceOf(CryptoException::class, $exception);
         $this->assertEquals('MAC error', $exception->getMessage());
     }
-    
+
     /**
      * 测试异常继承关系
      */
     public function testExceptionInheritance(): void
     {
         $exception = new MacException();
-        
+
         $this->assertInstanceOf(CryptoException::class, $exception);
         $this->assertInstanceOf(\Exception::class, $exception);
     }
-    
+
     /**
      * 测试异常链式调用
      */
     public function testExceptionChaining(): void
     {
         $root = new \Exception('Root cause');
-        $middle = new CryptoException('Middle error', 0, $root);
+        $middle = new HashException('Middle error', 0, $root);
         $exception = new MacException('MAC verification failed', 403, $middle);
-        
+
         $this->assertEquals('MAC verification failed', $exception->getMessage());
         $this->assertEquals(403, $exception->getCode());
         $this->assertSame($middle, $exception->getPrevious());

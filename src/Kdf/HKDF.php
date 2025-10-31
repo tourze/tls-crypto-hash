@@ -25,8 +25,6 @@ class HKDF implements KdfInterface
 
     /**
      * 获取KDF算法名称
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -37,10 +35,12 @@ class HKDF implements KdfInterface
      * 从主密钥导出密钥材料
      *
      * @param string $secret 输入密钥材料
-     * @param string $salt 盐值
-     * @param string $info 上下文信息
-     * @param int $length 需要导出的密钥长度（字节）
+     * @param string $salt   盐值
+     * @param string $info   上下文信息
+     * @param int    $length 需要导出的密钥长度（字节）
+     *
      * @return string 导出的密钥材料
+     *
      * @throws KdfException 如果密钥导出失败
      */
     public function derive(string $secret, string $salt, string $info, int $length): string
@@ -65,14 +65,15 @@ class HKDF implements KdfInterface
     /**
      * HKDF提取阶段
      *
-     * @param string $ikm 输入密钥材料
+     * @param string $ikm  输入密钥材料
      * @param string $salt 盐值
+     *
      * @return string 伪随机密钥
      */
     private function extract(string $ikm, string $salt): string
     {
         // 如果盐值为空，使用全0填充的哈希长度字符串
-        if (empty($salt)) {
+        if ('' === $salt) {
             $salt = str_repeat("\0", $this->hash->getOutputLength());
         }
 
@@ -82,9 +83,10 @@ class HKDF implements KdfInterface
     /**
      * HKDF扩展阶段
      *
-     * @param string $prk 伪随机密钥
-     * @param string $info 上下文信息
-     * @param int $length 需要导出的密钥长度
+     * @param string $prk    伪随机密钥
+     * @param string $info   上下文信息
+     * @param int    $length 需要导出的密钥长度
+     *
      * @return string 导出的密钥材料
      */
     private function expand(string $prk, string $info, int $length): string
@@ -93,8 +95,8 @@ class HKDF implements KdfInterface
         $iterations = ceil($length / $hashLen);
         $t = '';
         $okm = '';
-        
-        for ($i = 1; $i <= $iterations; $i++) {
+
+        for ($i = 1; $i <= $iterations; ++$i) {
             $data = $t . $info . chr($i);
             $t = hash_hmac($this->hash->getName(), $data, $prk, true);
             $okm .= $t;

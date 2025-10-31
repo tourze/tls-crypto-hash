@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Tourze\TLSCryptoHash\Tests\Hash;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tourze\TLSCryptoHash\Hash\SHA256;
 
 /**
  * SHA256测试类
+ *
+ * @internal
  */
-class SHA256Test extends TestCase
+#[CoversClass(SHA256::class)]
+final class SHA256Test extends TestCase
 {
     private SHA256 $hash;
 
@@ -84,8 +88,53 @@ class SHA256Test extends TestCase
         $this->assertEquals($expectedHash, $incrementalHash);
     }
 
+    /**
+     * 测试创建哈希上下文
+     */
+    public function testCreateContext(): void
+    {
+        $context = $this->hash->createContext();
+        $this->assertTrue($context instanceof \HashContext || is_resource($context));
+    }
+
+    /**
+     * 测试更新哈希上下文
+     */
+    public function testUpdateContext(): void
+    {
+        $context = $this->hash->createContext();
+        $data = 'test data';
+
+        // 测试更新操作不抛出异常
+        $this->hash->updateContext($context, $data);
+
+        // 验证上下文状态仍然有效，可以继续使用
+        $this->assertTrue($context instanceof \HashContext || is_resource($context));
+    }
+
+    /**
+     * 测试完成哈希计算
+     */
+    public function testFinalizeContext(): void
+    {
+        $context = $this->hash->createContext();
+        $data = 'test data';
+
+        $this->hash->updateContext($context, $data);
+        $hash = $this->hash->finalizeContext($context);
+
+        $this->assertIsString($hash);
+        $this->assertEquals(32, strlen($hash));
+
+        // 验证结果与直接哈希计算一致
+        $expectedHash = $this->hash->hash($data);
+        $this->assertEquals($expectedHash, $hash);
+    }
+
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->hash = new SHA256();
     }
 }

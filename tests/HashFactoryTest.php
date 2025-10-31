@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tourze\TLSCryptoHash\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tourze\TLSCryptoHash\Exception\CryptoException;
 use Tourze\TLSCryptoHash\Hash\SHA256;
@@ -13,8 +14,11 @@ use Tourze\TLSCryptoHash\Mac\HMAC;
 
 /**
  * HashFactory测试用例
+ *
+ * @internal
  */
-class HashFactoryTest extends TestCase
+#[CoversClass(HashFactory::class)]
+final class HashFactoryTest extends TestCase
 {
     /**
      * 测试创建哈希函数
@@ -110,4 +114,4 @@ class HashFactoryTest extends TestCase
         $key3 = $kdf->derive($secret, $salt, 'different info', $length);
         $this->assertNotEquals($key1, $key3);
     }
-} 
+}

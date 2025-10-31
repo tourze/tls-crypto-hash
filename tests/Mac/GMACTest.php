@@ -4,11 +4,19 @@ declare(strict_types=1);
 
 namespace Tourze\TLSCryptoHash\Tests\Mac;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tourze\TLSCryptoHash\Exception\MacException;
 use Tourze\TLSCryptoHash\Mac\GMAC;
 
-class GMACTest extends TestCase
+/**
+ * GMAC测试类
+ *
+ * @internal
+ */
+#[CoversClass(GMAC::class)]
+final class GMACTest extends TestCase
 {
     public function testGetName(): void
     {
@@ -28,22 +36,14 @@ class GMACTest extends TestCase
         $this->assertEquals(16, $gmac->getOutputLength());
     }
 
-    public static function provideKeySizes(): array
-    {
-        return [
-            [128],
-            [192],
-            [256],
-        ];
-    }
-
-    /**
-     * @dataProvider provideKeySizes
-     */
+    #[DataProvider('provideKeySizes')]
     public function testComputeAndVerify(int $keySize): void
     {
         $gmac = new GMAC($keySize);
-        $key = random_bytes($keySize / 8);
+        $keyLength = (int) ($keySize / 8);
+        $this->assertGreaterThan(0, $keyLength);
+        /** @var int<1, max> $keyLength */
+        $key = random_bytes($keyLength);
         $data = 'This is the data to authenticate with GMAC.';
 
         $computedMacWithIv = $gmac->compute($data, $key);
@@ -52,13 +52,14 @@ class GMACTest extends TestCase
         $this->assertTrue($gmac->verify($data, $computedMacWithIv, $key));
     }
 
-    /**
-     * @dataProvider provideKeySizes
-     */
+    #[DataProvider('provideKeySizes')]
     public function testVerifyWithIncorrectMac(int $keySize): void
     {
         $gmac = new GMAC($keySize);
-        $key = random_bytes($keySize / 8);
+        $keyLength = (int) ($keySize / 8);
+        $this->assertGreaterThan(0, $keyLength);
+        /** @var int<1, max> $keyLength */
+        $key = random_bytes($keyLength);
         $data = 'Some data.';
 
         $correctMacWithIv = $gmac->compute($data, $key);
@@ -69,32 +70,46 @@ class GMACTest extends TestCase
         $this->assertFalse($gmac->verify($data, $incorrectMacWithIv, $key));
     }
 
-    /**
-     * @dataProvider provideKeySizes
-     */
+    #[DataProvider('provideKeySizes')]
     public function testVerifyWithIncorrectKey(int $keySize): void
     {
         $gmac = new GMAC($keySize);
-        $key1 = random_bytes($keySize / 8);
-        $key2 = random_bytes($keySize / 8);
+        $keyLength = (int) ($keySize / 8);
+        $this->assertGreaterThan(0, $keyLength);
+        /** @var int<1, max> $keyLength */
+        $key1 = random_bytes($keyLength);
+        $key2 = random_bytes($keyLength);
         $data = 'Some important data.';
 
         $macWithIv = $gmac->compute($data, $key1);
         $this->assertFalse($gmac->verify($data, $macWithIv, $key2));
     }
 
-    /**
-     * @dataProvider provideKeySizes
-     */
+    #[DataProvider('provideKeySizes')]
     public function testVerifyWithCorruptedData(int $keySize): void
     {
         $gmac = new GMAC($keySize);
-        $key = random_bytes($keySize / 8);
+        $keyLength = (int) ($keySize / 8);
+        $this->assertGreaterThan(0, $keyLength);
+        /** @var int<1, max> $keyLength */
+        $key = random_bytes($keyLength);
         $data = 'Original Data String';
         $corruptedData = 'Corrupted Data String';
 
         $macWithIv = $gmac->compute($data, $key);
         $this->assertFalse($gmac->verify($corruptedData, $macWithIv, $key));
+    }
+
+    /**
+     * @return array<int, list<int>>
+     */
+    public static function provideKeySizes(): array
+    {
+        return [
+            [128],
+            [192],
+            [256],
+        ];
     }
 
     public function testComputeWithInvalidKeyLength(): void
@@ -131,4 +146,4 @@ class GMACTest extends TestCase
         $this->expectExceptionMessage('无效的GMAC密钥大小，有效值为128、192或256位');
         new GMAC(64);
     }
-} 
+}

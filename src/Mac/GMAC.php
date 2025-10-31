@@ -22,12 +22,13 @@ class GMAC implements MacInterface
      * 构造函数
      *
      * @param int $keySize 密钥大小（位）
+     *
      * @throws MacException 如果密钥大小无效
      */
     public function __construct(int $keySize = 256)
     {
         // 验证密钥大小
-        if (!in_array($keySize, [128, 192, 256])) {
+        if (!in_array($keySize, [128, 192, 256], true)) {
             throw new MacException('无效的GMAC密钥大小，有效值为128、192或256位');
         }
 
@@ -36,8 +37,6 @@ class GMAC implements MacInterface
 
     /**
      * 获取MAC算法名称
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -46,8 +45,6 @@ class GMAC implements MacInterface
 
     /**
      * 获取MAC输出长度（字节）
-     *
-     * @return int
      */
     public function getOutputLength(): int
     {
@@ -58,8 +55,10 @@ class GMAC implements MacInterface
      * 计算消息认证码
      *
      * @param string $data 要计算MAC的数据
-     * @param string $key 密钥
+     * @param string $key  密钥
+     *
      * @return string MAC值
+     *
      * @throws MacException 如果计算MAC失败
      */
     public function compute(string $data, string $key): string
@@ -88,7 +87,7 @@ class GMAC implements MacInterface
             16 // 标签长度（字节）
         );
 
-        if ($result === false || empty($tag)) {
+        if (false === $result || null === $tag) {
             throw new MacException('GMAC计算失败: ' . openssl_error_string());
         }
 
@@ -100,8 +99,9 @@ class GMAC implements MacInterface
      * 验证消息认证码
      *
      * @param string $data 原始数据
-     * @param string $mac 消息认证码（包含IV和标签）
-     * @param string $key 密钥
+     * @param string $mac  消息认证码（包含IV和标签）
+     * @param string $key  密钥
+     *
      * @return bool MAC是否有效
      */
     public function verify(string $data, string $mac, string $key): bool
@@ -111,18 +111,18 @@ class GMAC implements MacInterface
         if (strlen($mac) !== $expectedLength) {
             return false;
         }
-        
+
         // 验证密钥长度
         if (strlen($key) !== $this->keyLength) {
             return false;
         }
-        
+
         // 从传入的MAC中提取IV和标签
         $iv = substr($mac, 0, 12);
         $tag = substr($mac, 12);
-        
+
         $cipherName = 'aes-' . ($this->keyLength * 8) . '-gcm';
-        
+
         // 使用相同参数进行解密操作，验证标签是否正确
         $result = openssl_decrypt(
             '', // 空密文
@@ -133,8 +133,8 @@ class GMAC implements MacInterface
             $tag, // 验证此标签
             $data // 原始AAD数据
         );
-        
+
         // 如果解密成功（标签验证通过），则返回true
-        return $result !== false;
+        return false !== $result;
     }
-} 
+}

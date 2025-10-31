@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tourze\TLSCryptoHash\Tests\Kdf;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tourze\TLSCryptoHash\Exception\KdfException;
 use Tourze\TLSCryptoHash\Hash\SHA256;
@@ -13,8 +14,11 @@ use Tourze\TLSCryptoHash\Kdf\HKDF;
 
 /**
  * HKDF测试类
+ *
+ * @internal
  */
-class HKDFTest extends TestCase
+#[CoversClass(HKDF::class)]
+final class HKDFTest extends TestCase
 {
     /**
      * 测试HKDF-SHA256
@@ -165,8 +169,11 @@ class HKDFTest extends TestCase
         $hkdf = new HKDF($hash);
 
         $ikm = hex2bin('0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b');
+        $this->assertNotFalse($ikm);
         $salt = hex2bin('000102030405060708090a0b0c');
+        $this->assertNotFalse($salt);
         $info = hex2bin('f0f1f2f3f4f5f6f7f8f9');
+        $this->assertNotFalse($info);
         $length = 42;
 
         $expectedOutput = hex2bin(
@@ -174,9 +181,33 @@ class HKDFTest extends TestCase
             '2d2d0a90cf1a5a4c5db02d56ecc4c5bf' .
             '34007208d5b887185865'
         );
+        $this->assertNotFalse($expectedOutput);
 
         $derivedKey = $hkdf->derive($ikm, $salt, $info, $length);
 
         $this->assertEquals($expectedOutput, $derivedKey);
+    }
+
+    /**
+     * 测试derive方法的基本功能
+     */
+    public function testDerive(): void
+    {
+        $hash = new SHA256();
+        $hkdf = new HKDF($hash);
+
+        $ikm = 'test input key material';
+        $salt = 'test salt';
+        $info = 'test info';
+        $length = 16;
+
+        $result = $hkdf->derive($ikm, $salt, $info, $length);
+
+        $this->assertIsString($result);
+        $this->assertEquals($length, strlen($result));
+
+        // 确保相同参数产生相同结果
+        $result2 = $hkdf->derive($ikm, $salt, $info, $length);
+        $this->assertEquals($result, $result2);
     }
 }

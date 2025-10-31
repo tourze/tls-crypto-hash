@@ -4,12 +4,19 @@ declare(strict_types=1);
 
 namespace Tourze\TLSCryptoHash\Tests\Kdf;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Tourze\TLSCryptoHash\HashFactory;
 use Tourze\TLSCryptoHash\Exception\KdfException;
+use Tourze\TLSCryptoHash\HashFactory;
 use Tourze\TLSCryptoHash\Kdf\PBKDF2;
 
-class PBKDF2Test extends TestCase
+/**
+ * PBKDF2测试类
+ *
+ * @internal
+ */
+#[CoversClass(PBKDF2::class)]
+final class PBKDF2Test extends TestCase
 {
     public function testGetName(): void
     {
@@ -120,14 +127,14 @@ class PBKDF2Test extends TestCase
         $blockCount = ceil($length / $hashLength); // 24/32 -> 1
         $output = '';
 
-        for ($i = 1; $i <= $blockCount; $i++) {
+        for ($i = 1; $i <= $blockCount; ++$i) {
             $block = $u = hash_hmac(
                 $hashAlgo,
                 $salt . pack('N', $i),
                 $password,
                 true
             );
-            for ($j = 1; $j < 1000; $j++) {
+            for ($j = 1; $j < 1000; ++$j) {
                 $u = hash_hmac($hashAlgo, $u, $password, true);
                 $block ^= $u;
             }
@@ -139,10 +146,10 @@ class PBKDF2Test extends TestCase
         $this->assertEquals($length, strlen($derivedKey));
 
         if (!function_exists('hash_pbkdf2')) {
-            $this->assertEquals($expectedManual, $derivedKey, "Fallback implementation mismatch");
+            $this->assertEquals($expectedManual, $derivedKey, 'Fallback implementation mismatch');
         } else {
             $expectedBuiltIn = hash_pbkdf2($hashAlgo, $password, $salt, 1000, $length, true);
-            $this->assertEquals($expectedBuiltIn, $derivedKey, "Built-in function implementation mismatch");
+            $this->assertEquals($expectedBuiltIn, $derivedKey, 'Built-in function implementation mismatch');
         }
     }
 }

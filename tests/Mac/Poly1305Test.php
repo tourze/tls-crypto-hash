@@ -4,11 +4,18 @@ declare(strict_types=1);
 
 namespace Tourze\TLSCryptoHash\Tests\Mac;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tourze\TLSCryptoHash\Exception\MacException;
 use Tourze\TLSCryptoHash\Mac\Poly1305;
 
-class Poly1305Test extends TestCase
+/**
+ * Poly1305测试类
+ *
+ * @internal
+ */
+#[CoversClass(Poly1305::class)]
+final class Poly1305Test extends TestCase
 {
     public function testGetName(): void
     {
@@ -99,4 +106,4 @@ class Poly1305Test extends TestCase
         $key = random_bytes(32);
         $this->assertFalse($poly1305->verify('test', random_bytes(10), $key));
     }
-} 
+}

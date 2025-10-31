@@ -1,0 +1,12 @@
+parameters:
+    ignoreErrors:
+        # 忽略 TLS 密码哈希包中的密码学算法类名 - 这些是标准的密码学术语命名
+        -
+            message: '#类名 "(SHA256|SHA384|SHA512|PBKDF2|TLS12PRF|TLS13HKDF)" 不符合帕斯卡命名法.*#'
+            paths:
+                - src/Hash/SHA256.php
+                - src/Hash/SHA384.php
+                - src/Hash/SHA512.php
+                - src/Kdf/PBKDF2.php
+                - src/Tls/TLS12PRF.php
+                - src/Tls/TLS13HKDF.php

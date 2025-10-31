@@ -7,6 +7,6 @@ namespace Tourze\TLSCryptoHash\Exception;
 /**
  * 加密组件异常基类
  */
-class CryptoException extends \Exception
+abstract class CryptoException extends \Exception
 {
 }

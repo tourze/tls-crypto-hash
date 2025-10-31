@@ -18,8 +18,6 @@ class SHA1 implements HashInterface
 {
     /**
      * 获取哈希算法名称
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -28,8 +26,6 @@ class SHA1 implements HashInterface
 
     /**
      * 获取哈希输出长度（字节）
-     *
-     * @return int
      */
     public function getOutputLength(): int
     {
@@ -38,8 +34,6 @@ class SHA1 implements HashInterface
 
     /**
      * 获取哈希块大小（字节）
-     *
-     * @return int
      */
     public function getBlockSize(): int
     {
@@ -50,6 +44,7 @@ class SHA1 implements HashInterface
      * 计算数据的哈希值
      *
      * @param string $data 要计算哈希的数据
+     *
      * @return string 哈希值
      */
     public function hash(string $data): string
@@ -71,11 +66,11 @@ class SHA1 implements HashInterface
      * 更新哈希上下文
      *
      * @param resource|object $context 哈希上下文
-     * @param string $data 要添加到哈希计算的数据
-     * @return void
+     * @param string          $data    要添加到哈希计算的数据
      */
     public function updateContext($context, string $data): void
     {
+        assert($context instanceof \HashContext);
         hash_update($context, $data);
     }
 
@@ -83,10 +78,13 @@ class SHA1 implements HashInterface
      * 完成哈希计算
      *
      * @param resource|object $context 哈希上下文
+     *
      * @return string 最终的哈希值
      */
     public function finalizeContext($context): string
     {
+        assert($context instanceof \HashContext);
+
         return hash_final($context, true);
     }
 }
